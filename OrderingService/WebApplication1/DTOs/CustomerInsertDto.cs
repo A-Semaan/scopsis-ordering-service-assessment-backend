@@ -1,0 +1,11 @@
+﻿namespace OrderingServiceWeb.DTOs
+{
+    public class CustomerInsertDto
+    {
+        public required string Name { get; set; }
+
+        public required string Email { get; set; }
+
+        public required string Password { get; set; }
+    }
+}
