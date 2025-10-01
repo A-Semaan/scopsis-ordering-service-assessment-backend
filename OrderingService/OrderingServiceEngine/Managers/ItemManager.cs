@@ -29,6 +29,11 @@ namespace OrderingServiceEngine.Managers
 
         public long InsertItem(long customerID, ItemModel item)
         {
+            if (item.Price <= 0)
+            {
+                throw new ArgumentException("Price must be greater than zero");
+            }
+
             long itemID = _itemDataAccess.InsertItem(_mapper.Map<Item>(item));
 
             if (itemID > 0)

@@ -28,6 +28,21 @@ namespace OrderingServiceEngine.Managers
 
         public long InsertOrder(OrderModel order)
         {
+            if (order.Customer == null || order.Items == null || order.Items.Count == 0)
+            {
+                throw new ArgumentException("Order must have a customer and at least one item.");
+            }
+
+            if (order.TotalAmount <= 0)
+            {
+                throw new ArgumentException("Total amount must be greater than zero.");
+            }
+
+            if (order.TotalAmount != order.Items.Select(i => i.Price).Sum())
+            {
+                throw new ArgumentException("Total amount does not match sum of item prices.");
+            }
+
             long orderID = _orderDataAccess.InsertOrder(_mapper.Map<OrderingServiceData.Entities.Order>(order));
 
             if (orderID > 0)
