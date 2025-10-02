@@ -57,6 +57,11 @@ namespace OrderingServiceEngine.Managers
             return _customerDataAccess.CustomerEmailExists(email);
         }
 
+        public List<CustomerModel> GetAllCustomers()
+        {
+            return _mapper.Map<List<CustomerModel>>(_customerDataAccess.GetAllCustomers());
+        }
+
         public CustomerModel? GetCustomer(string email)
         {
             return _mapper.Map<CustomerModel>(_customerDataAccess.GetCustomer(email));

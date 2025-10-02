@@ -16,6 +16,7 @@ namespace OrderingServiceEngine
             // Add your mappings here
             CreateMap<Customer, CustomerModel>().ReverseMap();
             CreateMap<Item, ItemModel>().ReverseMap();
+            CreateMap<OrderItem, OrderItemModel>().ReverseMap();
             CreateMap<Order, OrderModel>().ReverseMap();
             CreateMap<ApplicationLog, ApplicationLogModel>().ReverseMap();
         }

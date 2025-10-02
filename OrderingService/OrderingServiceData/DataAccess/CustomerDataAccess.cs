@@ -24,6 +24,11 @@ namespace OrderingServiceData.DataAccess
             return customer != null;
         }
 
+        public List<Customer> GetAllCustomers()
+        {
+            return _dbContext.Customers.ToList();
+        }
+
         public Customer? GetCustomer(string email)
         {
             Customer? customer = _dbContext.Customers.Where(c => c.Email == email).FirstOrDefault();

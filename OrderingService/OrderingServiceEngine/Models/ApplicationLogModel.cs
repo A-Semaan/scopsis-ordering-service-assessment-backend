@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace OrderingServiceEngine.Models
@@ -15,6 +16,7 @@ namespace OrderingServiceEngine.Models
 
         public DateTime LogDate { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public APPLICATION_LOG_EVENT Event { get; set; }
 
         public string? EventInfo { get; set; }

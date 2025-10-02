@@ -15,30 +15,41 @@ namespace OrderingServiceEngine.Managers
     public class OrderManager : IOrderManager
     {
         private readonly IOrderDataAccess _orderDataAccess;
+        private readonly ICustomerDataAccess _customerDataAccess;
+        private readonly IItemDataAccess _itemDataAccess;
 
         private readonly IApplicationLogManager _applicationLogManager;
         private readonly IMapper _mapper;
 
-        public OrderManager(IOrderDataAccess orderDataAccess, IApplicationLogManager applicationLogManager, IMapper mapper)
+        public OrderManager(IOrderDataAccess orderDataAccess, IApplicationLogManager applicationLogManager, IMapper mapper, ICustomerDataAccess customerDataAccess, IItemDataAccess itemDataAccess)
         {
             _orderDataAccess = orderDataAccess;
             _applicationLogManager = applicationLogManager;
             _mapper = mapper;
+            _customerDataAccess = customerDataAccess;
+            _itemDataAccess = itemDataAccess;
         }
 
-        public long InsertOrder(OrderModel order)
+        public long InsertOrder(Dictionary<long, int> itemIDs, long customerID)
         {
-            if (order.Customer == null || order.Items == null || order.Items.Count == 0)
-            {
-                throw new ArgumentException("Order must have a customer and at least one item.");
-            }
+            // Ensure the customer ID in the token matches the customer ID in the order
+            Customer customer = _customerDataAccess.GetCustomer(customerID);
 
-            if (order.TotalAmount <= 0)
-            {
-                throw new ArgumentException("Total amount must be greater than zero.");
-            }
+            List<Item> items = _itemDataAccess.GetItems(itemIDs.Keys.ToList());
 
-            if (order.TotalAmount != order.Items.Select(i => i.Price).Sum())
+            Order order = new Order
+            {
+                Customer = customer,
+                OrderDate = DateTime.UtcNow,
+                TotalAmount = items.Select(item => item.Price * itemIDs[item.ID]).Sum(),
+                Items = items.Select(item => new OrderItem
+                {
+                    Item = item,
+                    Count = itemIDs[item.ID]
+                }).ToList()
+            };
+
+            if (order.TotalAmount != order.Items.Select(i => i.Item.Price * i.Count).Sum())
             {
                 throw new ArgumentException("Total amount does not match sum of item prices.");
             }

@@ -9,7 +9,7 @@ namespace OrderingServiceEngine.Managers.Abstractions
 {
     public interface IOrderManager
     {
-        public long InsertOrder(OrderModel order);
+        public long InsertOrder(Dictionary<long, int> itemIDs, long customerID);
         public OrderModel? GetOrder(long orderID);
         public List<OrderModel> GetOrdersByCustomer(long customerID);
     }

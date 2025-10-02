@@ -11,7 +11,7 @@ using OrderingServiceData;
 namespace OrderingServiceData.Migrations
 {
     [DbContext(typeof(OrderingServiceDbContext))]
-    [Migration("20251001210011_InitialCreate")]
+    [Migration("20251002195220_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -101,16 +101,11 @@ namespace OrderingServiceData.Migrations
                         .HasColumnType("varchar(200)")
                         .HasColumnName("name");
 
-                    b.Property<long?>("OrderID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double>("Price")
                         .HasColumnType("REAL")
                         .HasColumnName("price");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("OrderID");
 
                     b.ToTable("Items");
                 });
@@ -141,6 +136,27 @@ namespace OrderingServiceData.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("OrderingServiceData.Entities.OrderItem", b =>
+                {
+                    b.Property<long>("OrderID")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("order_id");
+
+                    b.Property<long>("ItemID")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("Count");
+
+                    b.HasKey("OrderID", "ItemID");
+
+                    b.HasIndex("ItemID");
+
+                    b.ToTable("OrderItem");
+                });
+
             modelBuilder.Entity("OrderingServiceData.Entities.ApplicationLog", b =>
                 {
                     b.HasOne("OrderingServiceData.Entities.Customer", "Customer")
@@ -150,13 +166,6 @@ namespace OrderingServiceData.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("OrderingServiceData.Entities.Item", b =>
-                {
-                    b.HasOne("OrderingServiceData.Entities.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderID");
-                });
-
             modelBuilder.Entity("OrderingServiceData.Entities.Order", b =>
                 {
                     b.HasOne("OrderingServiceData.Entities.Customer", "Customer")
@@ -164,6 +173,25 @@ namespace OrderingServiceData.Migrations
                         .HasForeignKey("CustomerID");
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("OrderingServiceData.Entities.OrderItem", b =>
+                {
+                    b.HasOne("OrderingServiceData.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OrderingServiceData.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("OrderingServiceData.Entities.Order", b =>

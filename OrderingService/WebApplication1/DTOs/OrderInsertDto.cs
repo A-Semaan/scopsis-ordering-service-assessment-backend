@@ -4,6 +4,6 @@ namespace OrderingServiceWeb.DTOs
 {
     public class OrderInsertDto
     {
-        public required List<long> ItemIDs { get; set; }
+        public Dictionary<long,int> ItemIDs { get; set; }
     }
 }

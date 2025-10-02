@@ -45,6 +45,16 @@ namespace OrderingServiceWeb.Controllers
             return orderModel;
         }
 
+        [HttpGet("GetOrders")]
+        public ActionResult<List<OrderModel>> GetOrdersByCustomer()
+        {
+            long customerID = _securityHelper.GetCustomerID();
+
+            // Get Orders
+            List<OrderModel> orders = _orderManager.GetOrdersByCustomer(customerID);
+            return orders;
+        }
+
         [HttpGet("GetOrdersByCustomer")]
         public ActionResult<List<OrderModel>> GetOrdersByCustomer(long customerID)
         {
@@ -67,25 +77,11 @@ namespace OrderingServiceWeb.Controllers
             {
                 return BadRequest("Invalid order data");
             }
-            // Ensure the customer ID in the token matches the customer ID in the order
-            CustomerModel currentCustomer = _securityHelper.GetCustomer();
-            if (currentCustomer == null)
-            {
-                return Unauthorized("Invalid Customer");
-            }
 
-            List<ItemModel> items = _itemManager.GetItems(order.ItemIDs);
-
-            OrderModel orderModel = new OrderModel
-            {
-                Customer = currentCustomer,
-                OrderDate = DateTime.UtcNow,
-                TotalAmount = items.Select(item => item.Price).Sum(),
-                Items = items
-            };
+            long customerID = _securityHelper.GetCustomerID();
 
             // Insert Order
-            return _orderManager.InsertOrder(orderModel);
+            return _orderManager.InsertOrder(order.ItemIDs, customerID);
         }
     }
 }

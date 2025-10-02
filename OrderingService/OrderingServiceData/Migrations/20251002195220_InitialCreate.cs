@@ -27,6 +27,23 @@ namespace OrderingServiceData.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    name = table.Column<string>(type: "varchar(200)", nullable: false),
+                    description = table.Column<string>(type: "varchar(1000)", nullable: true),
+                    price = table.Column<double>(type: "REAL", nullable: false),
+                    deleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    deleted_on = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ApplicationLogs",
                 columns: table => new
                 {
@@ -68,26 +85,28 @@ namespace OrderingServiceData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "OrderItem",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    name = table.Column<string>(type: "varchar(200)", nullable: false),
-                    description = table.Column<string>(type: "varchar(1000)", nullable: true),
-                    price = table.Column<double>(type: "REAL", nullable: false),
-                    deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    deleted_on = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    OrderID = table.Column<long>(type: "INTEGER", nullable: true)
+                    order_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    item_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    Count = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.id);
+                    table.PrimaryKey("PK_OrderItem", x => new { x.order_id, x.item_id });
                     table.ForeignKey(
-                        name: "FK_Items_Orders_OrderID",
-                        column: x => x.OrderID,
+                        name: "FK_OrderItem_Items_item_id",
+                        column: x => x.item_id,
+                        principalTable: "Items",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItem_Orders_order_id",
+                        column: x => x.order_id,
                         principalTable: "Orders",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -96,9 +115,9 @@ namespace OrderingServiceData.Migrations
                 column: "customer_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_OrderID",
-                table: "Items",
-                column: "OrderID");
+                name: "IX_OrderItem_item_id",
+                table: "OrderItem",
+                column: "item_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_customer_id",
@@ -111,6 +130,9 @@ namespace OrderingServiceData.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ApplicationLogs");
+
+            migrationBuilder.DropTable(
+                name: "OrderItem");
 
             migrationBuilder.DropTable(
                 name: "Items");

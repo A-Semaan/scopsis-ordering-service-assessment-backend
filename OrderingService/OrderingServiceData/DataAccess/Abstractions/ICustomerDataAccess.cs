@@ -11,6 +11,7 @@ namespace OrderingServiceData.DataAccess.Abstractions
     {
         public long InsertCustomer(Customer customer);
         public bool UpdateCustomer(long customerID, string? name, string? email, string? passwordHash);
+        public List<Customer> GetAllCustomers();
         public Customer? GetCustomer(string email);
         public Customer? GetCustomer(long customerID);
         public bool CustomerEmailExists(string email);

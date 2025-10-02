@@ -10,7 +10,7 @@ namespace WebApplication1.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerManager _customerManager;
@@ -22,9 +22,53 @@ namespace WebApplication1.Controllers
             _securityHelper = securityHelper;
         }
 
+        [HttpGet("GetCustomer")]
+        public ActionResult<CustomerModel> GetCustomer(long customerID)
+        {
+            if (customerID <= 0)
+            {
+                return BadRequest("customer ID is required.");
+            }
+
+            // get customer
+            CustomerModel temp = _customerManager.GetCustomer(customerID);
+
+            if (temp == null)
+            {
+                return NotFound("Customer not found");
+            }
+            return temp;
+        }
+
+        [HttpGet("GetAllCustomers")]
+        public ActionResult<List<CustomerModel>> GetAllCustomers()
+        {
+            // get all customer
+            List<CustomerModel> temp = _customerManager.GetAllCustomers();
+
+            if (temp == null)
+            {
+                return NotFound("Customer not found");
+            }
+            return temp;
+        }
+
         [AllowAnonymous]
-        [HttpPost("Insert")]
-        public ActionResult<string> Insert([FromBody] CustomerInsertDto request)
+        [HttpGet("EmailExists")]
+        public ActionResult<bool> EmailExists(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("email is required.");
+            }
+
+            // check if email exists
+            return _customerManager.CustomerEmailExists(email);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("InsertCustomer")]
+        public IActionResult InsertCustomer(CustomerInsertDto request)
         {
             // Validate input
             if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
@@ -38,11 +82,11 @@ namespace WebApplication1.Controllers
             CustomerModel temp = _customerManager.GetCustomer(customerId)!;
             string token = _securityHelper.GenerateToken(temp);
 
-            return token;
+            return Ok(new { Token = token });
         }
 
-        [HttpPost("Update")]
-        public ActionResult<bool> Update([FromBody] CustomerUpdateDto request)
+        [HttpPost("UpdateCustomer")]
+        public ActionResult<bool> UpdateCustomer(CustomerUpdateDto request)
         {
             if (request.CustomerID <= 0)
             {
@@ -55,22 +99,8 @@ namespace WebApplication1.Controllers
                 return BadRequest("At least one of the Name, Email, or Password is required.");
             }
 
-            // Create customer
+            // update customer
             return _customerManager.UpdateCustomer(request.CustomerID, request.Name, request.Email, request.Password);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("EmailExists")]
-        public ActionResult<bool> EmailExists(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest("email is required.");
-            }
-
-            // Sanitize inputs
-            // Create customer
-            return _customerManager.CustomerEmailExists(email);
         }
 
     }

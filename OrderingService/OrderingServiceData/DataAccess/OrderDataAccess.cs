@@ -1,4 +1,6 @@
-﻿using OrderingServiceData.DataAccess.Abstractions;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using OrderingServiceData.DataAccess.Abstractions;
 using OrderingServiceData.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,14 +21,14 @@ namespace OrderingServiceData.DataAccess
 
         public Order? GetOrder(long orderID)
         {
-            Order? order = _dbContext.Orders.Find(orderID);
+            Order? order = _dbContext.Orders.Include(o=>o.Items).ThenInclude(oi => oi.Item).Where(o=>o.ID== orderID).FirstOrDefault();
 
             return order;
         }
 
         public List<Order> GetOrdersByCustomer(long customerID)
         {
-            List<Order> list = _dbContext.Orders.Where(o => o.Customer.ID == customerID).ToList();
+            List<Order> list = _dbContext.Orders.Include(o => o.Items).ThenInclude(oi => oi.Item).Where(o => o.Customer.ID == customerID).ToList();
 
             return list;
         }

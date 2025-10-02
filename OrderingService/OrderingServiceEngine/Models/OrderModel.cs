@@ -18,6 +18,6 @@ namespace OrderingServiceEngine.Models
 
         public double TotalAmount { get; set; }
 
-        public List<ItemModel> Items { get; set; }
+        public List<OrderItemModel> Items { get; set; }
     }
 }

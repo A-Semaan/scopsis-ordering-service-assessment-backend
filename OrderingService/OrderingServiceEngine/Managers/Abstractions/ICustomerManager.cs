@@ -13,6 +13,7 @@ namespace OrderingServiceEngine.Managers.Abstractions
         
         public bool ValidateCustomerCredentials(string email, string password);
         public bool UpdateCustomer(long customerID, string? name, string? email, string? password);
+        public List<CustomerModel> GetAllCustomers();
         public CustomerModel? GetCustomer(string email);
         public CustomerModel? GetCustomer(long customerID);
         public bool CustomerEmailExists(string email);

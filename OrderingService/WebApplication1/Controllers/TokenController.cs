@@ -22,8 +22,8 @@ namespace OrderingServiceWeb.Controllers
             _securityHelper = securityHelper;
         }
 
-        [HttpGet("Token")]
-        public ActionResult<string> Token(CustomerAuthenticationDto customerAuthenticationDto)
+        [HttpPost("Token")]
+        public IActionResult Token(CustomerAuthenticationDto customerAuthenticationDto)
         {
             if (customerAuthenticationDto == null || string.IsNullOrWhiteSpace(customerAuthenticationDto.Email) || string.IsNullOrWhiteSpace(customerAuthenticationDto.Password))
             {
@@ -35,7 +35,7 @@ namespace OrderingServiceWeb.Controllers
                 CustomerModel temp = _customerManager.GetCustomer(customerAuthenticationDto.Email)!;
                 string token = _securityHelper.GenerateToken(temp);
 
-                return token;
+                return Ok(new { Token = token });
             }
 
             return Unauthorized("Invalid email or password.");

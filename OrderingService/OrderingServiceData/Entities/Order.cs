@@ -27,6 +27,6 @@ namespace OrderingServiceData.Entities
         public double TotalAmount { get; set; }
 
         [Column("items")]
-        public List<Item> Items { get; set; }
+        public List<OrderItem> Items { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace OrderingServiceWeb.Controllers
 
             long customerID = _securityHelper.GetCustomerID();
 
-            // Create customer
+            // get item
             ItemModel? itemModel = _itemManager.GetItem(customerID, itemID);
             if (itemModel == null)
             {
@@ -43,11 +43,20 @@ namespace OrderingServiceWeb.Controllers
             return itemModel;
         }
 
-        [HttpGet("GetItems")]
-        public ActionResult<List<ItemModel>> GetItems()
+        [HttpGet("GetAllItems")]
+        public ActionResult<List<ItemModel>> GetAllItems()
         {
-            // Create customer
+            // get all items
             List<ItemModel> itemModels = _itemManager.GetAllItems();
+            
+            return itemModels;
+        }
+
+        [HttpGet("GetItems")]
+        public ActionResult<List<ItemModel>> GetItems(List<long> itemIDs)
+        {
+            // get specific items
+            List<ItemModel> itemModels = _itemManager.GetItems(itemIDs);
             
             return itemModels;
         }
